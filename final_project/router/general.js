@@ -3,20 +3,19 @@ let books = require("./booksdb.js");
 
 const public_users = express.Router();
 
-// 📚 Get all books using Promise
-public_users.get('/', function (req, res) {
-  return new Promise((resolve, reject) => {
-    resolve(books);
-  })
-    .then((data) => res.status(200).json(data))
-    .catch(() => res.status(500).json({ message: "Error fetching books" }));
+// 📚 Get all books using async/await
+public_users.get('/', async function (req, res) {
+  try {
+    return res.status(200).json(books);
+  } catch (err) {
+    return res.status(500).json({ message: "Error fetching books" });
+  }
 });
 
-// 🔍 Get book by ISBN using async/await
+// 🔍 Get book by ISBN
 public_users.get('/isbn/:isbn', async function (req, res) {
-  const isbn = req.params.isbn;
-
   try {
+    const isbn = req.params.isbn;
     const book = books[isbn];
 
     if (book) {
@@ -24,17 +23,17 @@ public_users.get('/isbn/:isbn', async function (req, res) {
     } else {
       return res.status(404).json({ message: "Book not found" });
     }
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Error retrieving book" });
   }
 });
 
-// ✍️ Get books by author using async/await
+// ✍️ Get books by author
 public_users.get('/author/:author', async function (req, res) {
-  const author = req.params.author;
-  let result = {};
-
   try {
+    const author = req.params.author;
+    let result = {};
+
     Object.keys(books).forEach((key) => {
       if (books[key].author === author) {
         result[key] = books[key];
@@ -46,17 +45,17 @@ public_users.get('/author/:author', async function (req, res) {
     } else {
       return res.status(404).json({ message: "No books found for this author" });
     }
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Error fetching books" });
   }
 });
 
-// 🏷️ Get books by title using async/await
+// 🏷️ Get books by title
 public_users.get('/title/:title', async function (req, res) {
-  const title = req.params.title;
-  let result = {};
-
   try {
+    const title = req.params.title;
+    let result = {};
+
     Object.keys(books).forEach((key) => {
       if (books[key].title === title) {
         result[key] = books[key];
@@ -68,19 +67,23 @@ public_users.get('/title/:title', async function (req, res) {
     } else {
       return res.status(404).json({ message: "No books found with this title" });
     }
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Error fetching books" });
   }
 });
 
 // 📝 Get reviews
-public_users.get('/review/:isbn', function (req, res) {
-  const isbn = req.params.isbn;
+public_users.get('/review/:isbn', async function (req, res) {
+  try {
+    const isbn = req.params.isbn;
 
-  if (books[isbn]) {
-    return res.status(200).json(books[isbn].reviews);
-  } else {
-    return res.status(404).json({ message: "Book not found" });
+    if (books[isbn]) {
+      return res.status(200).json(books[isbn].reviews);
+    } else {
+      return res.status(404).json({ message: "Book not found" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: "Error fetching reviews" });
   }
 });
 
