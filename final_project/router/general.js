@@ -1,10 +1,9 @@
 const express = require('express');
-const axios = require('axios');
 let books = require("./booksdb.js");
 
 const public_users = express.Router();
 
-//  Get all books using Promise
+// 📚 Get all books using Promise
 public_users.get('/', function (req, res) {
   return new Promise((resolve, reject) => {
     resolve(books);
@@ -13,12 +12,13 @@ public_users.get('/', function (req, res) {
     .catch(() => res.status(500).json({ message: "Error fetching books" }));
 });
 
-// Get book by ISBN using async/await
+// 🔍 Get book by ISBN using async/await
 public_users.get('/isbn/:isbn', async function (req, res) {
   const isbn = req.params.isbn;
 
   try {
     const book = books[isbn];
+
     if (book) {
       return res.status(200).json(book);
     } else {
@@ -29,7 +29,7 @@ public_users.get('/isbn/:isbn', async function (req, res) {
   }
 });
 
-// Get books by author using async/await
+// ✍️ Get books by author using async/await
 public_users.get('/author/:author', async function (req, res) {
   const author = req.params.author;
   let result = {};
@@ -51,7 +51,7 @@ public_users.get('/author/:author', async function (req, res) {
   }
 });
 
-// Get books by title using async/await
+// 🏷️ Get books by title using async/await
 public_users.get('/title/:title', async function (req, res) {
   const title = req.params.title;
   let result = {};
@@ -73,7 +73,7 @@ public_users.get('/title/:title', async function (req, res) {
   }
 });
 
-//  Get reviews
+// 📝 Get reviews
 public_users.get('/review/:isbn', function (req, res) {
   const isbn = req.params.isbn;
 
